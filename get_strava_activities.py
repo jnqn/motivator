@@ -1,10 +1,49 @@
-import os, json, time
+import os, json, time, re
+import webbrowser
+from urllib.parse import urlparse, parse_qs
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from stravalib.client import Client
 
 global CLIENT
 global MY_STRAVA_CLIENT_ID
 global MY_STRAVA_CLIENT_SECRET
 global MY_STRAVA_CODE
+
+def handle_auth_response():
+    server = HTTPServer(('localhost', 5000), AuthHandler)
+    server.handle_request()
+
+class AuthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if re.match(r'^/authorization', self.path):
+            print('SURPRISE')
+            query_components = parse_qs(urlparse(self.path).query)
+            if 'code' in query_components:
+                code = query_components['code'][0]
+                os.environ['MY_STRAVA_CODE'] = code
+                try:
+                    access_token = CLIENT.exchange_code_for_token(
+                        client_id=MY_STRAVA_CLIENT_ID,
+                        client_secret=MY_STRAVA_CLIENT_SECRET,
+                        code=code
+                    )
+                    with open('access_token', 'w') as f:
+                        f.write(json.dumps(access_token))
+
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    self.wfile.write(b'Authorization complete. You can close this tab now.')
+                except Exception as e:
+                    self.send_response(500)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    self.wfile.write(b'Failed to exchange token: ' + str(e).encode())
+            else:
+                self.send_response(400)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                self.wfile.write(b'Missing authorization code.')
 
 def get_auth():
     if MY_STRAVA_CODE:
@@ -21,7 +60,8 @@ def get_auth():
             redirect_uri='http://localhost:5000/authorization',
             scope=['read_all', 'activity:read_all', 'profile:read_all']
             )
-        print(url)
+        webbrowser.open(url)
+        handle_auth_response()
 
 def check_auth():
     token = open('access_token', 'r').read()
