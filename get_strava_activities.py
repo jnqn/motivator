@@ -45,6 +45,11 @@ def check_auth():
         with open('access_token', 'w') as f:
             f.write(json.dumps(refresh))
 
+def get_activity_lengths():
+    activities = CLIENT.get_activities()
+    for activity in activities:
+        yield activity.start_date_local, activity.start_date_local + activity.elapsed_time
+
 
 if __name__ == '__main__':
     CLIENT = Client()
@@ -61,3 +66,6 @@ if __name__ == '__main__':
 
     athlete = CLIENT.get_athlete()
     print(f'Hello, {athlete.firstname} {athlete.lastname}!')
+    for activity in get_activity_lengths():
+        start, end = activity
+        print(f'Start: {start}, End: {end}')
