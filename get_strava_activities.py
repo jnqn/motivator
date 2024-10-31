@@ -38,7 +38,37 @@ class StravaAuth:
                 self.end_headers()
                 self.wfile.write(b'Authorization complete. You can close this tab now.')
             except Exception as e:
-                self.send_error(500, f'Failed to exchange token: {str(e)}')
+                self.send_error(500, f'Failed to exchange token: {str(e)}')S
+
+    def _get_new_auth(self) -> None:
+        """Initialize new authentication flow"""
+        if self.code:
+            self._handle_auth_code(self.code)
+        else:
+            auth_url = self.client.authorization_url(
+                client_id=self.client_id,
+                redirect_uri='http://localhost:5000/authorization',
+                scope=['read_all', 'activity:read_all', 'profile:read_all']
+            )
+            webbrowser.open(auth_url)
+            self._handle_auth_response()
+
+    def _handle_auth_response(self) -> None:
+        """Start local server to handle auth callback"""
+        server = HTTPServer(('localhost', 5000), self.AuthHandler)
+        server.handle_request()
+
+    def _handle_auth_code(self, code: str) -> None:
+        """Exchange authorization code for access token"""
+        os.environ['MY_STRAVA_CODE'] = code
+        access_token = self.client.exchange_code_for_token(
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            code=code
+        )
+
+        with open('access_token', 'w') as f:
+            json.dump(access_token, f)
 
     def authenticate(self) -> None:
         """Handle Strava authentication flow"""
