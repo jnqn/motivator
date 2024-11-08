@@ -38,7 +38,7 @@ class StravaAuth:
                 self.end_headers()
                 self.wfile.write(b'Authorization complete. You can close this tab now.')
             except Exception as e:
-                self.send_error(500, f'Failed to exchange token: {str(e)}')S
+                self.send_error(500, f'Failed to exchange token: {str(e)}')
 
     def _get_new_auth(self) -> None:
         """Initialize new authentication flow"""
