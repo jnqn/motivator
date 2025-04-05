@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime, timedelta, timezone
 
-from stravalib.model import Activity, Athlete
+from stravalib.model import SummaryActivity as Activity, SummaryAthlete as Athlete
 from src.strava.auth import StravaAuth
 from src.strava.activities import StravaActivities
 from src.spotify.handler import SpotifyHandler
