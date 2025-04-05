@@ -1,0 +1,1 @@
+# Strava tests initialization
