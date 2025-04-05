@@ -1,9 +1,8 @@
 from unittest.mock import patch, MagicMock
 import pytest
 
-# Mock stravalib to avoid compatibility issues
-with patch('sys.modules', {'stravalib': MagicMock(), 'stravalib.client': MagicMock()}):
-    from src.main import process_activities
+# Import directly (stravalib already mocked in conftest)
+from src.main import process_activities
 
 
 def test_process_activities(mock_strava_client, mock_spotify_client):

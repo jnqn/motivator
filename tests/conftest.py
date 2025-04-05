@@ -4,8 +4,15 @@ import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime, timedelta, timezone
 
-# Remove direct imports from stravalib model to avoid compatibility issues
-# We're using MagicMock instead
+# Mock stravalib.client to avoid compatibility issues
+import sys
+from unittest.mock import MagicMock
+
+# Create a mock for stravalib client that can be imported
+mock_client_module = MagicMock()
+mock_client_module.Client = MagicMock
+sys.modules['stravalib'] = MagicMock()
+sys.modules['stravalib.client'] = mock_client_module
 from src.strava.auth import StravaAuth
 from src.strava.activities import StravaActivities
 from src.spotify.handler import SpotifyHandler

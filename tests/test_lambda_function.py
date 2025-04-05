@@ -3,9 +3,8 @@ import os
 from unittest.mock import patch, MagicMock
 import pytest
 
-# Mock stravalib to avoid compatibility issues
-with patch('sys.modules', {'stravalib': MagicMock(), 'stravalib.client': MagicMock()}):
-    from lambda_function import lambda_handler, get_secret
+# Import directly (stravalib already mocked in conftest)
+from lambda_function import lambda_handler, get_secret
 
 
 @pytest.fixture

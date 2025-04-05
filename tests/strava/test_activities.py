@@ -2,9 +2,8 @@ from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 import pytest
 
-# Mock the stravalib import to avoid compatibility issues
-with patch('sys.modules', {'stravalib.client': MagicMock()}):
-    from src.strava.activities import StravaActivities
+# Import directly (stravalib already mocked in conftest)
+from src.strava.activities import StravaActivities
 
 
 def test_get_activities(mock_strava_client):
