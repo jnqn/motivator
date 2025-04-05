@@ -1,6 +1,12 @@
 from datetime import datetime, timezone, timedelta
 from unittest.mock import patch, MagicMock
+import os
 import pytest
+
+# Mock Spotify environment variables
+os.environ['SPOTIPY_CLIENT_ID'] = 'test_client_id'
+os.environ['SPOTIPY_CLIENT_SECRET'] = 'test_client_secret'
+os.environ['SPOTIPY_REDIRECT_URI'] = 'http://localhost:8888/callback'
 
 from src.spotify.handler import SpotifyHandler
 
