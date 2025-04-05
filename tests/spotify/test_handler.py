@@ -8,17 +8,23 @@ os.environ['SPOTIPY_CLIENT_ID'] = 'test_client_id'
 os.environ['SPOTIPY_CLIENT_SECRET'] = 'test_client_secret'
 os.environ['SPOTIPY_REDIRECT_URI'] = 'http://localhost:8888/callback'
 
-from src.spotify.handler import SpotifyHandler
+# Import with spotipy.oauth2.SpotifyOAuth patched
+with patch('spotipy.oauth2.SpotifyOAuth') as mock_oauth:
+    from src.spotify.handler import SpotifyHandler
 
 
 def test_init(mock_spotify_oauth):
-    handler = SpotifyHandler()
-    # Verify SpotifyOAuth was initialized with the correct scope
-    mock_spotify_oauth.assert_called_once()
-    scope_arg = mock_spotify_oauth.call_args[1]["scope"]
-    assert "user-read-recently-played" in scope_arg
-    assert "playlist-modify-private" in scope_arg
-    assert "playlist-modify-public" in scope_arg
+    with patch('spotipy.oauth2.SpotifyOAuth') as patched_oauth:
+        oauth_instance = MagicMock()
+        patched_oauth.return_value = oauth_instance
+        handler = SpotifyHandler()
+        
+        # Verify SpotifyOAuth was initialized with the correct scope
+        patched_oauth.assert_called_once()
+        scope_arg = patched_oauth.call_args[1]["scope"]
+        assert "user-read-recently-played" in scope_arg
+        assert "playlist-modify-private" in scope_arg
+        assert "playlist-modify-public" in scope_arg
 
 
 def test_create_activity_playlist(mock_spotify_client):
