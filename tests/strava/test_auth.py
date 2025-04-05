@@ -4,7 +4,9 @@ import time
 from unittest.mock import patch, MagicMock
 import pytest
 
-from src.strava.auth import StravaAuth
+# Mock the stravalib.client import to avoid compatibility issues
+with patch('sys.modules', {'stravalib.client': MagicMock()}):
+    from src.strava.auth import StravaAuth
 
 
 @pytest.fixture

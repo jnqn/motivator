@@ -64,39 +64,38 @@ def mock_s3_client():
 # Mock Strava client
 @pytest.fixture
 def mock_strava_client():
-    with patch("stravalib.client.Client") as mock_client:
-        strava_client = MagicMock()
-        mock_client.return_value = strava_client
-        
-        # Mock exchange_code_for_token
-        strava_client.exchange_code_for_token.return_value = {
-            "access_token": "new_access_token",
-            "refresh_token": "new_refresh_token",
-            "expires_at": int(datetime.now().timestamp() + 3600)  # Valid for 1 hour
-        }
-        
-        # Mock refresh_access_token
-        strava_client.refresh_access_token.return_value = {
-            "access_token": "refreshed_access_token",
-            "refresh_token": "refreshed_refresh_token",
-            "expires_at": int(datetime.now().timestamp() + 3600)  # Valid for 1 hour
-        }
-        
-        # Mock get_athlete
-        athlete = MagicMock()
-        athlete.firstname = "Test"
-        athlete.lastname = "User"
-        strava_client.get_athlete.return_value = athlete
-        
-        # Mock activity
-        activity = MagicMock()
-        activity.name = "Test Run"
-        activity.type.root = "Run"
-        activity.start_date_local = datetime.now(timezone.utc)
-        activity.elapsed_time = 3600  # 1 hour
-        strava_client.get_activities.return_value = [activity]
-        
-        yield strava_client
+    # Use direct MagicMock instead of patching stravalib to avoid import issues
+    strava_client = MagicMock()
+    
+    # Mock exchange_code_for_token
+    strava_client.exchange_code_for_token.return_value = {
+        "access_token": "new_access_token",
+        "refresh_token": "new_refresh_token",
+        "expires_at": int(datetime.now().timestamp() + 3600)  # Valid for 1 hour
+    }
+    
+    # Mock refresh_access_token
+    strava_client.refresh_access_token.return_value = {
+        "access_token": "refreshed_access_token",
+        "refresh_token": "refreshed_refresh_token",
+        "expires_at": int(datetime.now().timestamp() + 3600)  # Valid for 1 hour
+    }
+    
+    # Mock get_athlete
+    athlete = MagicMock()
+    athlete.firstname = "Test"
+    athlete.lastname = "User"
+    strava_client.get_athlete.return_value = athlete
+    
+    # Mock activity
+    activity = MagicMock()
+    activity.name = "Test Run"
+    activity.type.root = "Run"
+    activity.start_date_local = datetime.now(timezone.utc)
+    activity.elapsed_time = 3600  # 1 hour
+    strava_client.get_activities.return_value = [activity]
+    
+    return strava_client
 
 
 # Mock Spotify client
