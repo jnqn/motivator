@@ -1,7 +1,8 @@
 import os
 import logging
-from strava import StravaAuth, StravaActivities
-from spotify import SpotifyHandler
+from src.strava.auth import StravaAuth
+from src.strava.activities import StravaActivities
+from src.spotify.handler import SpotifyHandler
 
 # Set up logging
 logger = logging.getLogger(__name__)
