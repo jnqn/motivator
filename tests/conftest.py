@@ -4,7 +4,8 @@ import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime, timedelta, timezone
 
-from stravalib.model import SummaryActivity as Activity, SummaryAthlete as Athlete
+# Remove direct imports from stravalib model to avoid compatibility issues
+# We're using MagicMock instead
 from src.strava.auth import StravaAuth
 from src.strava.activities import StravaActivities
 from src.spotify.handler import SpotifyHandler
@@ -82,13 +83,13 @@ def mock_strava_client():
         }
         
         # Mock get_athlete
-        athlete = MagicMock(spec=Athlete)
+        athlete = MagicMock()
         athlete.firstname = "Test"
         athlete.lastname = "User"
         strava_client.get_athlete.return_value = athlete
         
         # Mock activity
-        activity = MagicMock(spec=Activity)
+        activity = MagicMock()
         activity.name = "Test Run"
         activity.type.root = "Run"
         activity.start_date_local = datetime.now(timezone.utc)
