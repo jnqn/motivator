@@ -8,9 +8,8 @@ os.environ['SPOTIPY_CLIENT_ID'] = 'test_client_id'
 os.environ['SPOTIPY_CLIENT_SECRET'] = 'test_client_secret'
 os.environ['SPOTIPY_REDIRECT_URI'] = 'http://localhost:8888/callback'
 
-# Import with spotipy.oauth2.SpotifyOAuth patched
-with patch('spotipy.oauth2.SpotifyOAuth') as mock_oauth:
-    from src.spotify.handler import SpotifyHandler
+# Import the handler first
+from src.spotify.handler import SpotifyHandler
 
 
 def test_init(mock_spotify_oauth):
